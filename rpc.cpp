@@ -7,21 +7,21 @@
 
 using namespace rpc;
 
-RPCClient::RPCClient(const std::string& server_name)
+rpcClient::rpcClient(const std::string& serverName)
     : server_name_(server_name)
     , request_pipe_(open_only, server_name + "_request")
     , response_pipe_(create_only, "response_" + server_name_, read_write, 1024)
 {
 }
 
-RPCClient::~RPCClient() {
+rpcClient::~rpcClient() {
     request_pipe_.close();
     response_pipe_.close();
     remove("response_" + server_name_.c_str());
 }
 
 template<typename RequestT, typename ResponseT>
-ResponseT RPCClient::send_request(const RequestT& request) {
+ResponseT rpcClient::sendRequest(const RequestT& request) {
     // Write request to request pipe
     request_pipe_.write(request.data(), request.size());
     

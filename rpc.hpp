@@ -13,12 +13,12 @@ namespace rpc {
 
 class RPCClient {
 public:
-    explicit RPCClient(const std::string& server_name);
+    explicit rpcClient(const std::string& serverName);
     
-    ~RPCClient();
+    ~rpcClient();
     
     template<typename RequestT, typename ResponseT>
-    ResponseT send_request(const RequestT& request);
+    ResponseT sendRequest(const RequestT& request);
     
 private:
     named_pipe_client request_pipe_;
