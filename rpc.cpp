@@ -15,9 +15,13 @@ rpcClient::rpcClient(const std::string& serverName)
 }
 
 rpcClient::~rpcClient() {
-    request_pipe_.close();
-    response_pipe_.close();
-    remove("response_" + serverName_.c_str());
+    try {
+        requestPipe_.close();
+        responsePipe_.close();
+        remove(("response_" + serverName_).c_str());
+    } catch (const std::exception& e) {
+        // Handle any exceptions during cleanup
+    }
 }
 
 template<typename RequestT, typename ResponseT>
@@ -36,4 +40,4 @@ ResponseT rpcClient::sendRequest(const RequestT& request) {
     return response;
 }
 
-template RPCClient::send_request<flatbuffers::FlatBufferBuilder, flatbuffers::FlatBufferBuilder>;
+template rpcClient::sendRequest<flatbuffers::FlatBufferBuilder, flatbuffers::FlatBufferBuilder>;

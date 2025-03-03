@@ -1,5 +1,4 @@
-#ifndef RPC_HPP
-#define RPC_HPP
+#define rpc.hpp
 
 #include <boost/interprocess/named_pipe.hpp>
 #include <flatbuffers/flatbuffer.h>
@@ -11,7 +10,7 @@ using namespace boost::interprocess;
 
 namespace rpc {
 
-class RPCClient {
+class rpcClient {
 public:
     explicit rpcClient(const std::string& serverName);
     
@@ -28,4 +27,4 @@ private:
 
 } // namespace rpc
 
-#endif // RPC_HPP
+#endif // rpc.hpp
