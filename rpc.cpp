@@ -8,16 +8,16 @@
 using namespace rpc;
 
 rpcClient::rpcClient(const std::string& serverName)
-    : server_name_(server_name)
-    , request_pipe_(open_only, server_name + "_request")
-    , response_pipe_(create_only, "response_" + server_name_, read_write, 1024)
+    : serverName_(serverName)
+    , requestPipe_(open_only, serverName + "_request")
+    , responsePipe_(create_only, "response_" + serverName_, read_write, 1024)
 {
 }
 
 rpcClient::~rpcClient() {
     request_pipe_.close();
     response_pipe_.close();
-    remove("response_" + server_name_.c_str());
+    remove("response_" + serverName_.c_str());
 }
 
 template<typename RequestT, typename ResponseT>

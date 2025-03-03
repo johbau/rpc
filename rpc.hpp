@@ -21,9 +21,9 @@ public:
     ResponseT sendRequest(const RequestT& request);
     
 private:
-    named_pipe_client request_pipe_;
-    named_pipe_server response_pipe_;
-    std::string server_name_;
+    named_pipe_client requestPipe_;
+    named_pipe_server responsePipe_;
+    std::string serverName_;
 };
 
 } // namespace rpc
