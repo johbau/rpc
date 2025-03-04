@@ -10,11 +10,11 @@ using namespace boost::interprocess;
 
 namespace rpc {
 
-class rpcClient {
+class RpcClient {
 public:
-    explicit rpcClient(const std::string& serverName);
+    explicit RpcClient(const std::string& serverName);
     
-    ~rpcClient();
+    ~RpcClient();
     
     template<typename RequestT, typename ResponseT>
     ResponseT sendRequest(const RequestT& request);

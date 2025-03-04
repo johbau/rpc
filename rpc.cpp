@@ -7,14 +7,14 @@
 
 using namespace rpc;
 
-rpcClient::rpcClient(const std::string& serverName)
+RpcClient::RpcClient(const std::string& serverName)
     : serverName_(serverName)
     , requestPipe_(open_only, serverName + "_request")
     , responsePipe_(create_only, "response_" + serverName_, read_write, 1024)
 {
 }
 
-rpcClient::~rpcClient() {
+RpcClient::~RpcClient() {
     try {
         requestPipe_.close();
         responsePipe_.close();
@@ -25,7 +25,7 @@ rpcClient::~rpcClient() {
 }
 
 template<typename RequestT, typename ResponseT>
-ResponseT rpcClient::sendRequest(const RequestT& request) {
+ResponseT RpcClient::sendRequest(const RequestT& request) {
     // Write request to request pipe
     request_pipe_.write(request.data(), request.size());
     
@@ -40,4 +40,4 @@ ResponseT rpcClient::sendRequest(const RequestT& request) {
     return response;
 }
 
-template rpcClient::sendRequest<flatbuffers::FlatBufferBuilder, flatbuffers::FlatBufferBuilder>;
+template RpcClient::sendRequest<flatbuffers::FlatBufferBuilder, flatbuffers::FlatBufferBuilder>;
