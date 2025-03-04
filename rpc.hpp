@@ -1,4 +1,5 @@
-#define rpc.hpp // AI! fix
+#ifndef RPC_HPP
+#define RPC_HPP
 
 #include <boost/interprocess/named_pipe.hpp>
 #include <flatbuffers/flatbuffer.h>

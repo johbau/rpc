@@ -44,3 +44,16 @@ ResponseT RpcClient::sendRequest(const RequestT& request) {
 }
 
 template RpcClient::sendRequest<flatbuffers::FlatBufferBuilder, flatbuffers::FlatBufferBuilder>;
+
+flatbuffers::FlatBufferBuilder RpcClient::CreateHelloRequest(RequestType type, const std::string& message) {
+    flatbuffers::FlatBufferBuilder fbb;
+    
+    // Create the HelloRequest
+    auto request = HelloRequest::CreateHelloRequest(
+        fbb, 
+        type, 
+        fbb.CreateString(message)
+    );
+    
+    return fbb;
+}
