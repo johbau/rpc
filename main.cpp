@@ -14,9 +14,10 @@ int main() {
     // Create a FlatBuffer request
     flatbuffers::FlatBufferBuilder fbb;
     
-    // Since our HelloRequest doesn't have any fields, we can just create an empty buffer
-    // In a real scenario, you would add data to the request here
-    auto request = fbb.CreateString("HelloRequest");
+    // Create a HelloRequest with GREETING type and message
+    HelloRequest::RequestType request_type = HelloRequest::GREETING;
+    std::string message = "Hello, world!";
+    auto request = fbb.CreateHelloRequest(request_type, message);
     
     // Send the request and get the response
     auto response = client.sendRequest<flatbuffers::FlatBufferBuilder, flatbuffers::FlatBufferBuilder>(fbb);

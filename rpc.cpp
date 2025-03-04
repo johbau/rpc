@@ -26,6 +26,10 @@ RpcClient::~RpcClient() {
 
 template<typename RequestT, typename ResponseT>
 ResponseT RpcClient::sendRequest(const RequestT& request) {
+    // Create HelloRequest
+    flatbuffers::FlatBufferBuilder fbb;
+    auto request = CreateHelloRequest(request_type, message);
+    
     // Write request to request pipe
     request_pipe_.write(request.data(), request.size());
     

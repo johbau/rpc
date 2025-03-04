@@ -3,8 +3,17 @@ namespace Hello;
 // Define basic types
 typedef String string;
 
+// Define request type enum
+enum RequestType {
+    UNKNOWN = 0,
+    GREETING = 1,
+    GOODBYE = 2
+}
+
 // Define our request message
 table HelloRequest {
+    request_type: RequestType;
+    message: string;
 }
 
 // Define our response message
