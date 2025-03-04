@@ -1,0 +1,9 @@
+namespace Hello;
+
+request HelloRequest {
+    // No fields needed for this simple request
+}
+
+response HelloResponse {
+    result: [String];
+}

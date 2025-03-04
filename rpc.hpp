@@ -3,6 +3,7 @@
 #include <boost/interprocess/named_pipe.hpp>
 #include <flatbuffers/flatbuffer.h>
 #include <flatbuffers/flatbuffers.h>
+#include "hello_generated.h"
 #include <string>
 #include <memory>
 

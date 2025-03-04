@@ -33,9 +33,8 @@ ResponseT RpcClient::sendRequest(const RequestT& request) {
     char buffer[1024];
     response_pipe_.read(buffer, 1024);
     
-    // Deserialize flatbuffer response
-    flatbuffers::FlatBufferBuilder fbb;
-    auto response = flatbuffers::GetResponseT(buffer);
+    // Create a HelloResponse from the received buffer
+    auto response = HelloResponse::GetRootAsHelloResponse(buffer);
     
     return response;
 }
