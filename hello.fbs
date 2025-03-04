@@ -18,7 +18,7 @@ table HelloRequest {
 
 // Define our response message
 table HelloResponse {
-    result: [string];
+    result: [string] (max 1024);
 }
 
 // Mark HelloResponse as the root type
