@@ -1,5 +1,8 @@
 namespace Hello;
 
+// Define basic types
+typedef String string;
+
 // Define our request message
 table HelloRequest {
     // No fields needed for this simple request
@@ -7,7 +10,7 @@ table HelloRequest {
 
 // Define our response message and mark it as the root type
 table HelloResponse {
-    result: [String];
+    result: [string];
 }
 
 root_type HelloResponse;
