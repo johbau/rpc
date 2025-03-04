@@ -5,7 +5,6 @@ typedef String string;
 
 // Define our request message
 table HelloRequest {
-    // No fields needed for this simple request
 }
 
 // Define our response message
