@@ -8,9 +8,10 @@ table HelloRequest {
     // No fields needed for this simple request
 }
 
-// Define our response message and mark it as the root type
+// Define our response message
 table HelloResponse {
     result: [string];
 }
 
+// Mark HelloResponse as the root type
 root_type HelloResponse;
