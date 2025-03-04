@@ -6,6 +6,8 @@ table HelloRequest {
 }
 
 // Define our response message and mark it as the root type
-root_type HelloResponse {
+table HelloResponse {
     result: [String];
 }
+
+root_type HelloResponse;
