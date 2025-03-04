@@ -1,9 +1,11 @@
 namespace Hello;
 
-request HelloRequest {
+// Define our request message
+table HelloRequest {
     // No fields needed for this simple request
 }
 
-response HelloResponse {
+// Define our response message and mark it as the root type
+root_type HelloResponse {
     result: [String];
 }
