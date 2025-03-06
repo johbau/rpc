@@ -17,6 +17,3 @@ table HelloRequest {
 table HelloResponse {
     result: [string];
 }
-
-// Mark HelloResponse as the root type
-root_type HelloResponse;
