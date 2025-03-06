@@ -5,17 +5,10 @@ import (
     "os"
     "syscall"
     "github.com/google/flatbuffers/go"
+    "Hello"
 )
 
-type Request struct {
-    Method string      `json:"method"`
-    Args   interface{} `json:"args"`
-}
-
-type Response struct {
-    Result interface{} `json:"result"`
-    Error  string      `json:"error"`
-}
+// Request and Response types are now defined in the FlatBuffers schema
 
 func main() {
     // Create or open the message queue
@@ -42,9 +35,9 @@ func main() {
         // Create a buffer for FlatBuffers
         buffer := flatbuffers.NewBuilder(0)
         
-        // Process the request
-        var req Request
-        req_buf := buffer.ReadRoot(&req, msg[:n])
+        // Process the request using FlatBuffers schema
+        var req Hello.HelloRequest
+        req_buf := Hello.GetRootAsHelloRequest(buffer, msg[:n])
         if req_buf == nil {
             fmt.Printf("Failed to parse request\n")
             continue
@@ -75,9 +68,9 @@ func main() {
             continue
         }
         
-        // Create a FlatBuffer response
+        // Create a FlatBuffer response using our schema
         respBuilder := flatbuffers.NewBuilder(0)
-        respOffset := resp.Pack(respBuilder)
+        respOffset := Hello.NewHelloResponse(respBuilder)
         if respOffset == 0 {
             fmt.Printf("Failed to create response buffer\n")
             syscall.Mq_close(clientMq)
