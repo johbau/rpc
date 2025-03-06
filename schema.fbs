@@ -1,0 +1,9 @@
+table Request {
+    method:string;
+    args: [int];
+}
+
+table Response {
+    result: [int];
+    error:string;
+}

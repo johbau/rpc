@@ -1,10 +1,10 @@
 package main
 
 import (
-    "encoding/json"
     "fmt"
     "os"
     "syscall"
+    "github.com/google/flatbuffers/go"
 )
 
 type Request struct {
@@ -39,19 +39,22 @@ func main() {
             continue
         }
 
-        // Unmarshal the request
+        // Create a buffer for FlatBuffers
+        buffer := flatbuffers.NewBuilder(0)
+        
+        // Process the request
         var req Request
-        err = json.Unmarshal(msg[:n], &req)
-        if err != nil {
-            fmt.Printf("Failed to unmarshal request: %v\n", err)
+        req_buf := buffer.ReadRoot(&req, msg[:n])
+        if req_buf == nil {
+            fmt.Printf("Failed to parse request\n")
             continue
         }
 
-        // Process the request
         var resp Response
-        switch req.Method {
+        switch *req.Method() {
         case "add":
-            a, b := req.Args.([]int)
+            a := req.Args(0)
+            b := req.Args(1)
             resp.Result = a + b
         case "echo":
             resp.Result = req.Args
@@ -72,9 +75,11 @@ func main() {
             continue
         }
         
-        responseBytes, err := json.Marshal(resp)
-        if err != nil {
-            fmt.Printf("Failed to marshal response: %v\n", err)
+        // Create a FlatBuffer response
+        respBuilder := flatbuffers.NewBuilder(0)
+        respOffset := resp.Pack(respBuilder)
+        if respOffset == 0 {
+            fmt.Printf("Failed to create response buffer\n")
             syscall.Mq_close(clientMq)
             continue
         }
