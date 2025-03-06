@@ -10,7 +10,7 @@ using namespace rpc;
 RpcClient::RpcClient(const std::string& serverName)
     : serverName_(serverName)
     , requestPipe_(open_only, serverName + "_request")
-    , responsePipe_(create_only, "response_" + serverName_, read_write, 1024)
+    , responsePipe_(create_only, "response_" + serverName_, read_write)
 {
 }
 
