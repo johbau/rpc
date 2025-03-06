@@ -1,12 +1,8 @@
 #ifndef RPC_HPP
 #define RPC_HPP
 
-#include <boost/interprocess/message_queue.hpp>
-#include <flatbuffers/flatbuffer.h>
-#include <flatbuffers/flatbuffers.h>
-#include "hello_generated.h"
+#include <boost/interprocess/ipc/message_queue.hpp>
 #include <string>
-#include <memory>
 
 using namespace boost::interprocess;
 
@@ -14,20 +10,16 @@ namespace rpc {
 
 class RpcClient {
 public:
-    explicit RpcClient(const std::string& serverName);
+    explicit RpcClient(const std::string& service);
     
     ~RpcClient();
     
-    template<typename RequestT, typename ResponseT>
-    ResponseT sendRequest(const RequestT& request);
-    
-    // Helper method to create a HelloRequest
-    static flatbuffers::FlatBufferBuilder CreateHelloRequest(RequestType type, const std::string& message);
+    void sendRequest(unsigned char *request, std::size_t request_size, unsigned char *response, std::size_t response_size);
     
 private:
-    message_queue requestPipe_;
-    message_queue responsePipe_;
-    std::string serverName_;
+    std::string service_;
+    message_queue request_;
+    message_queue response_;
 };
 
 } // namespace rpc

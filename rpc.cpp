@@ -1,60 +1,33 @@
-#define _GLIBCXX_USE_CXX11_ABI 0
 #include "rpc.hpp"
-#include <boost/interprocess/sync/stream_open_or_create.hpp>
-#include <boost/interprocess/mapped_regions/map_reg.hpp>
-#include <boost/interprocess/streams/bufferstream.hpp>
-#include <flatbuffers/util.h>
+#include <boost/interprocess/ipc/message_queue.hpp>
+
+#define MAX_SIZE 1024
+#define SERVER_QUEUE_NAME(suffix) (("/server_queue_" + suffix).c_str())
+#define CLIENT_QUEUE_NAME(suffix) (("/client_queue_" + suffix).c_str())
 
 using namespace rpc;
 
-RpcClient::RpcClient(const std::string& serverName)
-    : serverName_(serverName)
-    , requestPipe_(open_only, serverName + "_request", read_write)
-    , responsePipe_(create_only, "response_" + serverName_, read_write)
+RpcClient::RpcClient(const std::string& service)
+    : service_(service)
+    , request_(open_only, SERVER_QUEUE_NAME(service))
+    , response_(create_only, CLIENT_QUEUE_NAME(service), 1, MAX_SIZE)
 {
 }
 
 RpcClient::~RpcClient() {
     try {
-        requestPipe_.close();
-        responsePipe_.close();
-        remove(("response_" + serverName_).c_str());
+        remove(CLIENT_QUEUE_NAME(service_));
     } catch (const std::exception& e) {
         // Handle any exceptions during cleanup
     }
 }
 
-template<typename RequestT, typename ResponseT>
-ResponseT RpcClient::sendRequest(const RequestT& request) {
-    // Create HelloRequest
-    flatbuffers::FlatBufferBuilder fbb;
-    auto request = CreateHelloRequest(request_type, message);
+void RpcClient::sendRequest(unsigned char *request, std::size_t request_size, unsigned char *response, std::size_t response_size) {
+    // Send request through message queue (priority 0)
+    request_.send(request, request_size, 0);
     
-    // Send request through message queue (priority 0, message type 1)
-    request_pipe_.send(request.data(), request.size(), 0, 1);
-    
-    // Receive response from message queue
-    char buffer[1024];
-    unsigned int priority = 0;
-    response_pipe_.receive(buffer, 1024, priority, 1);
-    
-    // Create a HelloResponse from the received buffer
-    auto response = HelloResponse::GetRootAsHelloResponse(buffer);
-    
-    return response;
-}
-
-template RpcClient::sendRequest<flatbuffers::FlatBufferBuilder, flatbuffers::FlatBufferBuilder>;
-
-flatbuffers::FlatBufferBuilder RpcClient::CreateHelloRequest(RequestType type, const std::string& message) {
-    flatbuffers::FlatBufferBuilder fbb;
-    
-    // Create the HelloRequest
-    auto request = HelloRequest::CreateHelloRequest(
-        fbb, 
-        type, 
-        fbb.CreateString(message)
-    );
-    
-    return fbb;
+    // Receive response from message queue (priority 0)
+    message_queue::size_type received_size;
+    unsigned int priority;
+    response_.receive(response, response_size, received_size, priority);
 }

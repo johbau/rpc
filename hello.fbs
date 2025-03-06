@@ -1,10 +1,7 @@
 namespace Hello;
 
-// Define basic types
-typedef String string;
-
 // Define request type enum
-enum RequestType {
+enum RequestType:byte {
     UNKNOWN = 0,
     GREETING = 1,
     GOODBYE = 2
@@ -18,7 +15,7 @@ table HelloRequest {
 
 // Define our response message
 table HelloResponse {
-    result: [string] (max 1024);
+    result: [string];
 }
 
 // Mark HelloResponse as the root type

@@ -4,7 +4,7 @@
 flatc --cpp hello.fbs
 
 # Build the project
-g++ -std=c++11 main.cpp rpc.cpp -o example -lpthread -lboost_system -lboost_filesystem -lboost_interprocess -lrt
+g++ -std=c++11 main.cpp rpc.cpp -o mq_rpc_client -lpthread -lboost_system -lrt
 
-# Run the example
-./example
+# Run RPC client
+./mq_rpc_client
