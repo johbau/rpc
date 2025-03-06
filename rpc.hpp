@@ -1,7 +1,7 @@
 #ifndef RPC_HPP
 #define RPC_HPP
 
-#include <boost/interprocess/named_pipe.hpp>
+#include <boost/interprocess/message_queue.hpp>
 #include <flatbuffers/flatbuffer.h>
 #include <flatbuffers/flatbuffers.h>
 #include "hello_generated.h"
@@ -25,8 +25,8 @@ public:
     static flatbuffers::FlatBufferBuilder CreateHelloRequest(RequestType type, const std::string& message);
     
 private:
-    named_pipe_client requestPipe_;
-    named_pipe_server responsePipe_;
+    message_queue requestPipe_;
+    message_queue responsePipe_;
     std::string serverName_;
 };
 

@@ -9,7 +9,7 @@ using namespace rpc;
 
 RpcClient::RpcClient(const std::string& serverName)
     : serverName_(serverName)
-    , requestPipe_(open_only, serverName + "_request")
+    , requestPipe_(open_only, serverName + "_request", read_write)
     , responsePipe_(create_only, "response_" + serverName_, read_write)
 {
 }
@@ -30,12 +30,13 @@ ResponseT RpcClient::sendRequest(const RequestT& request) {
     flatbuffers::FlatBufferBuilder fbb;
     auto request = CreateHelloRequest(request_type, message);
     
-    // Write request to request pipe
-    request_pipe_.write(request.data(), request.size());
+    // Send request through message queue (priority 0, message type 1)
+    request_pipe_.send(request.data(), request.size(), 0, 1);
     
-    // Read response from response pipe
+    // Receive response from message queue
     char buffer[1024];
-    response_pipe_.read(buffer, 1024);
+    unsigned int priority = 0;
+    response_pipe_.receive(buffer, 1024, priority, 1);
     
     // Create a HelloResponse from the received buffer
     auto response = HelloResponse::GetRootAsHelloResponse(buffer);
