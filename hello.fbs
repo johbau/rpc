@@ -1,0 +1,22 @@
+namespace Hello;
+
+// Define request type enum
+enum RequestType:byte {
+    UNKNOWN = 0,
+    GREETING = 1,
+    GOODBYE = 2
+}
+
+// Define our request message
+table HelloRequest {
+    request_type: RequestType;
+    message: string;
+}
+
+// Define our response message
+table HelloResponse {
+    result: [string];
+}
+
+// Mark HelloResponse as the root type
+root_type HelloResponse;
