@@ -1,87 +1,82 @@
 package main
 
 import (
-    "fmt"
-    "os"
-    "syscall"
-    "github.com/google/flatbuffers/go"
-    "Hello"
+	"fmt"
+	"os"
+	"github.com/aceofkid/posix_mq"
+	"github.com/google/flatbuffers/go"
+	"github.com/johbau/rpc/server/Hello"
 )
 
 // Request and Response types are now defined in the FlatBuffers schema
 
 func main() {
-    // Create or open the message queue
-    mq, err := syscall.Mq_open("/rpc_server_queue", syscall.O_CREAT|syscall.O_RDWR, 0600, &syscall.MqAttr{})
-    if err != nil {
-        fmt.Printf("Failed to create message queue: %v\n", err)
-        os.Exit(1)
-    }
-    defer syscall.Mq_close(mq)
-    defer syscall.Mq_unlink("/rpc_server_queue")
+	// Create or open the server message queue
+	serverFlag := posix_mq.O_WRONLY | posix_mq.O_CREAT
+	serverMq, err1 := posix_mq.NewMessageQueue("/server_queue_hello", serverFlag, 0666, nil)
+	if err1 != nil {
+		fmt.Printf("Failed to create message queue: %v\n", err1)
+		os.Exit(1)
+	}
+	defer serverMq.Close()
+	defer serverMq.Unlink()
 
-    // Start processing requests
-    fmt.Println("RPC server is listening on /rpc_server_queue...")
-    
-    for {
-        // Receive message from queue
-        msg := make([]byte, 1024)
-        n, err := syscall.Mq_receive(mq, msg, 0)
-        if err != nil {
-            fmt.Printf("Failed to receive message: %v\n", err)
-            continue
-        }
+	// Start processing requests
+	fmt.Println("RPC server is listening on /server_queue_hello...")
 
-        // Create a buffer for FlatBuffers
-        buffer := flatbuffers.NewBuilder(0)
-        
-        // Process the request using FlatBuffers schema
-        var req Hello.HelloRequest
-        req_buf := Hello.GetRootAsHelloRequest(buffer, msg[:n])
-        if req_buf == nil {
-            fmt.Printf("Failed to parse request\n")
-            continue
-        }
+	for {
+		// Receive message from queue
+		msg, _, err := serverMq.Receive()
+		if err != nil {
+			fmt.Printf("Failed to receive message: %v\n", err)
+			continue
+		}
 
-        var resp Response
-        switch *req.Method() {
-        case "add":
-            a := req.Args(0)
-            b := req.Args(1)
-            resp.Result = a + b
-        case "echo":
-            resp.Result = req.Args
-        default:
-            resp.Error = "Unknown method"
-        }
+		// Process the request using FlatBuffers schema
+		request := Hello.GetRootAsHelloRequest(msg, 0)
+		if request == nil {
+			fmt.Printf("Failed to parse request\n")
+			continue
+		}
 
-        // Send response back to client queue
-        clientQueueName, ok := req.Args.(string)
-        if !ok {
-            fmt.Println("No client queue name provided")
-            continue
-        }
+		requestType := request.RequestType()
+		switch requestType {
+		case 1:
+			fmt.Printf("GREETING")
+		case 2:
+			fmt.Printf("GOODBYE")
+		default:
+			fmt.Printf("unknown request")
+		}
+		message := string(request.Message())
+		fmt.Printf(message)
 
-        clientMq, err := syscall.Mq_open(clientQueueName, syscall.O_WRONLY, 0, nil)
-        if err != nil {
-            fmt.Printf("Failed to open client queue: %v\n", err)
-            continue
-        }
-        
-        // Create a FlatBuffer response using our schema
-        respBuilder := flatbuffers.NewBuilder(0)
-        respOffset := Hello.NewHelloResponse(respBuilder)
-        if respOffset == 0 {
-            fmt.Printf("Failed to create response buffer\n")
-            syscall.Mq_close(clientMq)
-            continue
-        }
+		// Create a buffer for FlatBuffers
+		builder := flatbuffers.NewBuilder(1024)
 
-        _, err = syscall.Mq_send(clientMq, responseBytes, 0)
-        if err != nil {
-            fmt.Printf("Failed to send response: %v\n", err)
-        }
-        
-        syscall.Mq_close(clientMq)
-    }
+		// Create the response using the Flatbuffers schema
+		result1 := builder.CreateString("Hello client")
+		Hello.HelloResponseStartResultVector(builder, 1)
+		builder.PrependUOffsetT(result1)
+		result := builder.EndVector(1)
+		Hello.HelloResponseStart(builder)
+		Hello.HelloResponseAddResult(builder, result)
+		response := Hello.HelloResponseEnd(builder)
+		builder.Finish(response)
+
+		// Open the client message queue
+		clientFlag := posix_mq.O_RDONLY
+		clientMq, err2 := posix_mq.NewMessageQueue("/client_queue_hello", clientFlag, 0, nil)
+		if err2 != nil {
+			fmt.Printf("Failed to open client queue: %v\n", err2)
+			os.Exit(1)
+		}
+
+		err = clientMq.Send(builder.FinishedBytes(), 0)
+		if err != nil {
+			fmt.Printf("Failed to send response: %v\n", err)
+		}
+
+		clientMq.Close()
+	}
 }
