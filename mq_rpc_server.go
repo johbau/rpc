@@ -3,19 +3,18 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 	"github.com/aceofkid/posix_mq"
 	"github.com/google/flatbuffers/go"
 	"github.com/johbau/rpc/server/Hello"
 )
 
-// Request and Response types are now defined in the FlatBuffers schema
-
 func main() {
 	// Create or open the server message queue
 	serverFlag := posix_mq.O_WRONLY | posix_mq.O_CREAT
-	serverMq, err1 := posix_mq.NewMessageQueue("/server_queue_hello", serverFlag, 0666, nil)
-	if err1 != nil {
-		fmt.Printf("Failed to create message queue: %v\n", err1)
+	serverMq, err := posix_mq.NewMessageQueue("/server_queue_hello", serverFlag, 0666, nil)
+	if err != nil {
+		fmt.Printf("Failed to create message queue: %v\n", err)
 		os.Exit(1)
 	}
 	defer serverMq.Close()
@@ -28,7 +27,8 @@ func main() {
 		// Receive message from queue
 		msg, _, err := serverMq.Receive()
 		if err != nil {
-			fmt.Printf("Failed to receive message: %v\n", err)
+			//fmt.Printf("Failed to receive message: %v\n", err)
+			time.Sleep(1 * time.Second)
 			continue
 		}
 
@@ -66,9 +66,9 @@ func main() {
 
 		// Open the client message queue
 		clientFlag := posix_mq.O_RDONLY
-		clientMq, err2 := posix_mq.NewMessageQueue("/client_queue_hello", clientFlag, 0, nil)
-		if err2 != nil {
-			fmt.Printf("Failed to open client queue: %v\n", err2)
+		clientMq, err := posix_mq.NewMessageQueue("/client_queue_hello", clientFlag, 0, nil)
+		if err != nil {
+			fmt.Printf("Failed to open client queue: %v\n", err)
 			os.Exit(1)
 		}
 
