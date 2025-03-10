@@ -29,8 +29,8 @@ func main() {
 
 	// Create a FlatBuffer request
 	builder := flatbuffers.NewBuilder(1024)
-	Hello.HelloRequestStart(builder)
 	message := builder.CreateString("Hello from Go client!")
+	Hello.HelloRequestStart(builder)
 	Hello.HelloRequestAddRequestType(builder, Hello.RequestTypeGREETING)
 	Hello.HelloRequestAddMessage(builder, message)
 	request := Hello.HelloRequestEnd(builder)
@@ -52,6 +52,6 @@ func main() {
 	response := Hello.GetRootAsHelloResponse(msg, 0)
 	length := response.ResultLength()
 	if length > 0 {
-		fmt.Printf("Received response: %s", string(response.Result(0)))
+		fmt.Printf("Received response: %s\n", string(response.Result(0)))
 	}
 }
