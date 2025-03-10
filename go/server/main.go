@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"os"
 	"time"
+
 	"github.com/aceofkid/posix_mq"
 	"github.com/google/flatbuffers/go"
-	"github.com/johbau/rpc/server/Hello"
+	"github.com/johbau/rpc/go/Hello"
 )
 
 func main() {

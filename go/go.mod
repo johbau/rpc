@@ -1,4 +1,4 @@
-module github.com/johbau/rpc/server
+module github.com/johbau/rpc/go
 
 go 1.22.10
 
