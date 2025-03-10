@@ -52,6 +52,5 @@ func main() {
 	response := Hello.GetRootAsHelloResponse(msg, 0)
 	length := response.ResultLength()
 	if length > 0 {
-		fmt.Printf("Received response: %s\n", string(response.Result(0)))
 	}
 }
