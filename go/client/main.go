@@ -11,7 +11,8 @@ import (
 
 func main() {
 	// Create or open the client message queue
-	clientMq, err := posix_mq.NewMessageQueue("/client_queue_hello", posix_mq.O_RDONLY|posix_mq.O_CREAT, 0666, nil)
+	const clientFlags = posix_mq.O_RDONLY | posix_mq.O_CREAT
+	clientMq, err := posix_mq.NewMessageQueue("/client_queue_hello", clientFlags, 0666, nil)
 	if err != nil {
 		log.Fatalf("Failed to create client message queue: %v", err)
 	}
@@ -19,7 +20,8 @@ func main() {
 	defer clientMq.Unlink()
 
 	// Create or open the server message queue
-	serverMq, err := posix_mq.NewMessageQueue("/server_queue_hello", posix_mq.O_WRONLY|posix_mq.O_CREAT, 0666, nil)
+	const serverFlags = posix_mq.O_WRONLY
+	serverMq, err := posix_mq.NewMessageQueue("/server_queue_hello", serverFlags, 0, nil)
 	if err != nil {
 		log.Fatalf("Failed to open server message queue: %v", err)
 	}
