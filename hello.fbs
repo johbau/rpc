@@ -13,6 +13,9 @@ table HelloRequest {
     message: string;
 }
 
+// Mark HelloRequest as the root type
+root_type HelloRequest;
+
 // Define our response message
 table HelloResponse {
     result: [string];
