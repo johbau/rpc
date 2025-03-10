@@ -10,30 +10,16 @@ import (
 )
 
 func main() {
-	// Create client message queue for responses
 	const service = "hello"
-	mqName := "/client_queue_" + service
-	const mqFlags = posix_mq.O_RDONLY | posix_mq.O_CREAT | posix_mq.O_EXCL
-	const mqMode = 0666
-
-	respMq, err := posix_mq.NewMessageQueue(mqName, mqFlags, mqMode, nil)
-	if err != nil {
-		fmt.Printf("Failed to create response queue %s: %v\n", mqName, err)
-		os.Exit(1)
-	}
-	defer respMq.Close()
-	defer respMq.Unlink()
 
 	// Create request builder
 	builder := flatbuffers.NewBuilder(1024)
 
-	messageStr := "Hello from Go"
-	msgOffset := builder.CreateString(messageStr)
-
 	// Build HelloRequest
+	message := builder.CreateString("Hello from Go")
 	Hello.HelloRequestStart(builder)
 	Hello.HelloRequestAddRequestType(builder, Hello.RequestTypeGREETING)
-	Hello.HelloRequestAddMessage(builder, msgOffset)
+	Hello.HelloRequestAddMessage(builder, message)
 	request := Hello.HelloRequestEnd(builder)
 	builder.Finish(request)
 
@@ -54,6 +40,18 @@ func main() {
 		fmt.Printf("Failed to send request: %v\n", err)
 		return
 	}
+
+	// Create client message queue for responses
+	mqName := "/client_queue_" + service
+	const mqFlags = posix_mq.O_RDONLY | posix_mq.O_CREAT | posix_mq.O_EXCL
+	const mqMode = 0666
+
+	respMq, err := posix_mq.NewMessageQueue(mqName, mqFlags, mqMode, nil)
+	if err != nil {
+		fmt.Printf("Failed to create response queue %s: %v\n", mqName, err)
+		os.Exit(1)
+	}
+	defer respMq.Unlink()
 
 	// Wait for response
 	data, _, err := respMq.Receive()
