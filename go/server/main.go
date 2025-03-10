@@ -12,7 +12,7 @@ import (
 
 func main() {
 	// Create or open the server message queue
-	serverFlag := posix_mq.O_RDONLY | posix_mq.O_CREAT
+	const serverFlag = posix_mq.O_RDONLY | posix_mq.O_CREAT
 	serverMq, err := posix_mq.NewMessageQueue("/server_queue_hello", serverFlag, 0666, nil)
 	if err != nil {
 		fmt.Printf("Failed to create message queue: %v\n", err)
@@ -66,7 +66,7 @@ func main() {
 		builder.Finish(response)
 
 		// Open the client message queue
-		clientFlag := posix_mq.O_WRONLY
+		const clientFlag = posix_mq.O_WRONLY
 		clientMq, err := posix_mq.NewMessageQueue("/client_queue_hello", clientFlag, 0, nil)
 		if err != nil {
 			fmt.Printf("Failed to open client queue: %v\n", err)
