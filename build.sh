@@ -4,5 +4,7 @@
 flatc --cpp hello.fbs
 flatc --go hello.fbs
 
-# Build the project
-g++ -std=c++11 main.cpp rpc.cpp -o client -lpthread -lboost_system -lrt
+rm -f c++/hello_generated
+mv hello_generated.h c++
+rm -rf go/Hello
+mv -u Hello go

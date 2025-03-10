@@ -10,6 +10,7 @@ using namespace rpc;
 int main() {
     // Create an RPC client
     const std::string service = "hello";
+    std::cout << "Create RpcClient" << std::endl;
     RpcClient client(service);
     
     // Create a FlatBuffer request
