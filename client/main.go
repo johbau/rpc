@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/google/flatbuffers"
 	"github.com/aceofkid/posix_mq"
+	"github.com/google/flatbuffers"
 	"github.com/johbau/rpc/go/Hello"
 )
 
@@ -33,9 +33,9 @@ func main() {
 
 	// Create a FlatBuffer request
 	builder := flatbuffers.NewBuilder(1024)
-	rpc.HelloRequestStart(builder)
-	rpc.HelloRequestAddGreetingStr(builder, "Hello from Go client!")
-	request := rpc.HelloRequestEnd(builder)
+	Hello.HelloRequestStart(builder)
+	Hello.HelloRequestAddGreetingStr(builder, "Hello from Go client!")
+	request := Hello.HelloRequestEnd(builder)
 	builder.Finish(request)
 
 	// Send request to server
@@ -52,6 +52,6 @@ func main() {
 	}
 
 	// Parse the response
-	root := rpc.GetRootAsHelloResponse(bytes.NewBuffer(response))
+	root := Hello.GetRootAsHelloResponse(bytes.NewBuffer(response))
 	log.Printf("Received response: %s", root.Greeting())
 }
