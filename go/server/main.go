@@ -42,15 +42,15 @@ func main() {
 
 		requestType := request.RequestType()
 		switch requestType {
-		case 1:
-			fmt.Printf("GREETING")
-		case 2:
-			fmt.Printf("GOODBYE")
+		case Hello.RequestTypeGREETING:
+			fmt.Printf("request GREETING\n")
+		case Hello.RequestTypeGOODBYE:
+			fmt.Printf("request GOODBYE\n")
 		default:
-			fmt.Printf("unknown request")
+			fmt.Printf("unknown request\n")
 		}
 		message := string(request.Message())
-		fmt.Printf(message)
+		fmt.Printf("message: %s\n", message)
 
 		// Create a buffer for FlatBuffers
 		builder := flatbuffers.NewBuilder(1024)
