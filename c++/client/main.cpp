@@ -6,6 +6,8 @@
 #include <iostream>
 
 using namespace rpc;
+using namespace Hello;
+using namespace flatbuffers;
 
 int main() {
     // Create an RPC client
@@ -14,25 +16,31 @@ int main() {
     RpcClient client(service);
     
     // Create a FlatBuffer request
-    flatbuffers::FlatBufferBuilder fbb;
+    std::cout << "Create flatbuffers builder" << std::endl;
+    FlatBufferBuilder fbb;
     
     // Create a HelloRequest with GREETING type and message
-    Hello::RequestType request_type = Hello::RequestType_GREETING;
+    std::cout << "Create request" << std::endl;
+    RequestType request_type = RequestType_GREETING;
     auto message = fbb.CreateString("Hello, world!");
     auto request = CreateHelloRequest(fbb, request_type, message);
     fbb.Finish(request);
 
     // Send the request and get the response
+    std::cout << "Create make RPC call" << std::endl;
     const std::size_t size = 1024;
     unsigned char response[size] = {0};
     client.sendRequest(fbb.GetBufferPointer(), fbb.GetSize(), response, size);
 
     // Verify the response
-    auto helloResponse = Hello::GetHelloResponse(response);
-    auto result = helloResponse->result();
-
-    // Print the response
-    std::cout << "Received response with " << result->size() << " strings." << std::endl;
-    
+    std::cout << "Verify response" << std::endl;
+    auto verifier = Verifier(response, size);
+    if (VerifyHelloResponseBuffer(verifier)) {
+        auto helloResponse = GetHelloResponse(response);
+        auto result = helloResponse->result();
+        std::cout << "Received response with " << result->size() << " strings." << std::endl;
+    } else {
+        std::cout << "No valid response received." << std::endl;
+    }
     return 0;
 }
