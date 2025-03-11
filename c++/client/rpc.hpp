@@ -1,10 +1,9 @@
 #ifndef RPC_HPP
 #define RPC_HPP
 
-#include <boost/interprocess/ipc/message_queue.hpp>
+#include <mqueue.h>
+#include <sys/stat.h>
 #include <string>
-
-using namespace boost::interprocess;
 
 namespace rpc {
 
@@ -18,8 +17,8 @@ public:
     
 private:
     std::string service_;
-    message_queue request_;
-    message_queue response_;
+    mqd_t request_;
+    mqd_t response_;
 };
 
 } // namespace rpc
