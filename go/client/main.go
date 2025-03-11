@@ -27,12 +27,6 @@ func main() {
 	}
 	defer serverMq.Close()
 
-	// Send request to server
-	err = serverMq.Send(builder.FinishedBytes(), 0)
-	if err != nil {
-		log.Fatalf("Failed to send request: %v", err)
-	}
-
 	// Create or open the client message queue
 	const clientFlags = posix_mq.O_RDONLY | posix_mq.O_CREAT
 	clientMq, err := posix_mq.NewMessageQueue("/client_queue_hello", clientFlags, 0666, nil)
@@ -40,6 +34,12 @@ func main() {
 		log.Fatalf("Failed to create client message queue: %v", err)
 	}
 	defer clientMq.Unlink()
+
+	// Send request to server
+	err = serverMq.Send(builder.FinishedBytes(), 0)
+	if err != nil {
+		log.Fatalf("Failed to send request: %v", err)
+	}
 
 	// Receive response
 	msg, _, err := clientMq.Receive()
