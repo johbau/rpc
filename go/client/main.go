@@ -10,8 +10,6 @@ import (
 )
 
 func main() {
-	const service = "hello"
-
 	// Create request builder
 	builder := flatbuffers.NewBuilder(1024)
 
@@ -24,6 +22,7 @@ func main() {
 	builder.Finish(request)
 
 	// Open server message queue
+	const service = "hello"
 	srvMqName := "/server_queue_" + service
 	const srvMqFlags = posix_mq.O_WRONLY
 
@@ -33,13 +32,6 @@ func main() {
 		os.Exit(1)
 	}
 	defer reqMq.Close()
-
-	// Send request
-	err = reqMq.Send(builder.FinishedBytes(), 0)
-	if err != nil {
-		fmt.Printf("Failed to send request: %v\n", err)
-		return
-	}
 
 	// Create client message queue for responses
 	mqName := "/client_queue_" + service
@@ -52,6 +44,13 @@ func main() {
 		os.Exit(1)
 	}
 	defer respMq.Unlink()
+
+	// Send request
+	err = reqMq.Send(builder.FinishedBytes(), 0)
+	if err != nil {
+		fmt.Printf("Failed to send request: %v\n", err)
+		return
+	}
 
 	// Wait for response
 	data, _, err := respMq.Receive()
