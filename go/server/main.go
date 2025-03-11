@@ -18,7 +18,6 @@ func main() {
 		fmt.Printf("Failed to create message queue: %v\n", err)
 		os.Exit(1)
 	}
-	defer serverMq.Close()
 	defer serverMq.Unlink()
 
 	// Start processing requests
