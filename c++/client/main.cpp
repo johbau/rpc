@@ -1,5 +1,5 @@
 #include "rpc.hpp"
-#include "hello_generated.h"
+#include "../hello_generated.h"
 #include "flatbuffers/flatbuffers.h"
 #include <string>
 #include <vector>
