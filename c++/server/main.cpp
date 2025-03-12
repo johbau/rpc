@@ -1,5 +1,6 @@
-#include <iostream>
 #include "rpc.hpp"
+#include <iostream>
+#include <unistd.h>
 
 int main() {
     // Create and run the RPC server
