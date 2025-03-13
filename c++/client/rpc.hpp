@@ -5,6 +5,8 @@
 #include <sys/stat.h>
 #include <string>
 
+#define MAX_SIZE 1024
+
 namespace rpc {
 
 class RpcClient {

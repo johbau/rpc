@@ -28,7 +28,7 @@ int main() {
 
     // Send the request and get the response
     std::cout << "Create make RPC call" << std::endl;
-    const std::size_t size = 1024;
+    const std::size_t size = MAX_SIZE;
     unsigned char response[size] = {0};
     client.sendRequest(fbb.GetBufferPointer(), fbb.GetSize(), response, size);
 

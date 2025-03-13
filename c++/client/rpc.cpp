@@ -4,7 +4,6 @@
 #include <stdexcept>
 #include <mqueue.h>
 
-#define MAX_SIZE 1024
 #define SERVER_QUEUE_NAME(suffix) (("/server_queue_" + suffix).c_str())
 #define CLIENT_QUEUE_NAME(suffix) (("/client_queue_" + suffix).c_str())
 
