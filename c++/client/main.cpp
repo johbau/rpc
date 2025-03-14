@@ -27,7 +27,7 @@ int main() {
     fbb.Finish(request);
 
     // Send the request and get the response
-    std::cout << "Create make RPC call" << std::endl;
+    std::cout << "Make RPC call" << std::endl;
     const std::size_t size = MAX_SIZE;
     unsigned char response[size] = {0};
     try {
