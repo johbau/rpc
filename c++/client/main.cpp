@@ -18,7 +18,7 @@ int main() {
     // Create a FlatBuffer request
     std::cout << "Create flatbuffers builder" << std::endl;
     FlatBufferBuilder fbb;
-    
+
     // Create a HelloRequest with GREETING type and message
     std::cout << "Create request" << std::endl;
     RequestType request_type = RequestType_GREETING;
@@ -30,7 +30,12 @@ int main() {
     std::cout << "Create make RPC call" << std::endl;
     const std::size_t size = MAX_SIZE;
     unsigned char response[size] = {0};
-    client.sendRequest(fbb.GetBufferPointer(), fbb.GetSize(), response, size);
+    try {
+    	client.sendRequest(fbb.GetBufferPointer(), fbb.GetSize(), response, size);
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return 1;
+    }
 
     // Verify the response
     std::cout << "Verify response" << std::endl;
