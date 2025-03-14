@@ -1,4 +1,4 @@
-module github.com/johbau/rpc/go
+module github.com/johbau/rpc_mqueue/go
 
 go 1.22.10
 

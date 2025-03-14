@@ -6,7 +6,7 @@ import (
 
 	"github.com/aceofkid/posix_mq"
 	"github.com/google/flatbuffers/go"
-	"github.com/johbau/rpc/go/Hello"
+	"github.com/johbau/rpc_mqueue/go/Hello"
 )
 
 func main() {
